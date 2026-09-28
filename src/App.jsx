@@ -9,47 +9,60 @@ import NameInput from './components/NameInput';
 import ProductCounter from './components/ProductCounter';
 
 function App() {
-  
+  const products = [
+  {
+    id: 1,
+    name: "Laptop",
+    price: 899,
+    category: "Electronics",
+    brand: "Dell",
+    inStock: true
+  },
+  {
+    id: 2,
+    name: "iPhone",
+    price: 999,
+    category: "Smartphone",
+    brand: "Apple",
+    inStock: false
+  },
+  {
+    id: 3,
+    name: "Keyboard",
+    price: 79,
+    category: "Accessories",
+    brand: "Logitech",
+    inStock: true
+  },
+  {
+    id: 4,
+    name: "Mouse",
+    price: 39,
+    category: "Accessories",
+    brand: "Logitech",
+    inStock: false
+  }
+];
+
   return (
     <div>
+      <h1>Hello React!</h1>
       <Toggle />
       <NameInput />
-      <h1>Hello React!</h1>
       <NameForm />
       <User /><br />
       <div>
         <h2>Producten</h2>
-        <Product
-          name="Laptop"
-          price={899}
-          category="Electronics"
-          brand="Dell"
-          inStock={true}
-        />
-
-        <Product
-          name="iPhone"
-          price={999}
-          category="Smartphone"
-          brand="Apple"
-          inStock={false}
-        />
-
-        <Product
-          name="Keyboard"
-          price={79}
-          category="Accessories"
-          brand="Logitech"
-          inStock={true}
-        />
-
-        <Product
-          name="Mouse"
-          price={39}
-          category="Accessories"
-          brand="Logitech"
-          inStock={false}
-        />
+        {products.map((product) => (
+          <Product
+            key={product.id}
+            name={product.name}
+            price={product.price}
+            category={product.category}
+            brand={product.brand}
+            inStock={product.inStock}
+          />
+        ))}
       </div><br />
       <Book /><br />
       <Employee />
