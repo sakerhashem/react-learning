@@ -1,4 +1,4 @@
-function Product({ name, price, category, brand, inStock }) {
+function Product({ name, price, category, brand, stock }) {
     
   return (
     <div>
@@ -7,7 +7,8 @@ function Product({ name, price, category, brand, inStock }) {
       <p>prijs: €{price}</p>
       <p>{price > 500 ? "Duur product" : "Betaalbaar product"}</p>
       <p>categorie: {category}</p>
-      <p>Op voorraad: {inStock ? "Op voorraad" : "Niet op voorraad"}</p>
+      <p>Voorraad: {stock}</p>
+      <p>{stock > 0 ? "Product is beschikbaar" : "Product is niet beschikbaar"}</p>
     </div>
   );
 }
