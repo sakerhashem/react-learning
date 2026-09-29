@@ -7,9 +7,10 @@ import Toggle from './components/Toggle';
 import NameForm from './components/NameForm';
 import NameInput from './components/NameInput';
 import ProductCounter from './components/ProductCounter';
+import { useState } from 'react';
 
 function App() {
-  const products = [
+  const [products, setProducts] = useState([
     {
       id: 1,
       name: "Laptop",
@@ -42,10 +43,40 @@ function App() {
       brand: "Logitech",
       stock: 7
     }
-  ];
+  ]);
 
+  const [showProducts, setShowProducts] = useState(true);
+  const [showExpensive, setShowExpensive] = useState(false);
   const availableProducts = products.filter((product) => product.stock > 0);
   const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
+  
+
+  const increaseStock = (id) => {
+    setProducts(
+      products.map((product) => 
+        product.id === id
+        ? { 
+            ...product,
+            stock: product.stock + 1 
+          }
+        : product
+        )
+      );
+  };
+
+  const decreaseStock = (id) => {
+    setProducts(
+      products.map((product) =>
+        product.id === id 
+      ? { 
+        ...product,
+        stock: product.stock > 0 ? product.stock - 1 : 0
+        }
+      : product
+      )
+    );
+  };
+  
 
   return (
     <div>
@@ -54,32 +85,51 @@ function App() {
       <NameInput />
       <NameForm />
       <User /><br />
-      <div>
-        <h2>Producten</h2>
-        {availableProducts.map((product) => (
-          <Product
-            key={product.id}
-            name={product.name}
-            price={product.price}
-            category={product.category}
-            brand={product.brand}
-            stock={product.stock}
-          />
-        ))}
-      </div><br />
-      <div>
-        <h2>Dure producten op voorraad</h2>
-        {expensiveProducts.map((product) => (
-          <Product 
-            key={product.id}
-            name={product.name}
-            price={product.price}
-            category={product.category}
-            brand={product.brand}
-            stock={product.stock}
-          />
-        ))}
-      </div>
+      <button onClick={() => setShowProducts(!showProducts)}>
+          {showProducts ? "Verberg producten" : "Toon producten"}
+      </button>
+      {showProducts && ( 
+        <><div>
+            <h2>Producten</h2>
+
+            {products.map((product) => (
+              <div key={product.id}>
+                <Product
+                  name={product.name}
+                  price={product.price}
+                  category={product.category}
+                  brand={product.brand}
+                  stock={product.stock} 
+                />
+
+                <button onClick={() => increaseStock(product.id)}>
+                  +
+                </button>
+                <button onClick={() => decreaseStock(product.id)}>
+                  -
+                </button>
+               </div> 
+            ))}
+            
+            </div><br /></>
+       )}
+       <button onClick={() => setShowExpensive(!showExpensive)}>
+          {showExpensive ? "Verberg dure producten" : "Toon dure producten"}
+       </button>
+       {showExpensive && (
+          <><div>
+            <h2>Dure producten op voorraad</h2>
+            {expensiveProducts.map((product) => (
+              <Product
+                key={product.id}
+                name={product.name}
+                price={product.price}
+                category={product.category}
+                brand={product.brand}
+                stock={product.stock} />
+            ))}
+          </div></>
+        )}      
       <Book /><br />
       <Employee />
       <Counter />
