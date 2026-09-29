@@ -45,10 +45,17 @@ function App() {
     }
   ]);
 
+  const [productName, setProductName] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productCategory, setProductCategory] = useState('');
+  const [productBrand, setProductBrand] = useState('');
+  const [productStock, setProductStock] = useState('');
+
   const [showProducts, setShowProducts] = useState(true);
   const [showExpensive, setShowExpensive] = useState(false);
   const availableProducts = products.filter((product) => product.stock > 0);
   const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
+  const [error, setError] = useState("");
   
 
   const increaseStock = (id) => {
@@ -76,6 +83,36 @@ function App() {
       )
     );
   };
+
+  const addProduct = () => {
+    if (
+      productName.trim() === "" || 
+      productPrice.trim() === "" || 
+      productCategory.trim() === "" || 
+      productBrand.trim() === "" || 
+      productStock.trim() === ""
+    ) {
+      setError("Vul alle velden in.");
+      return;
+    }
+
+    const newProduct = {
+      id: Date.now(),
+      name: productName,
+      price: Number(productPrice),
+      category: productCategory,
+      brand: productBrand,
+      stock: Number(productStock)
+    };
+
+    setProducts([...products, newProduct]);
+    setProductName("");
+    setProductPrice("");
+    setProductCategory("");
+    setProductBrand("");
+    setProductStock("");
+    setError("");
+  };
   
 
   return (
@@ -91,6 +128,40 @@ function App() {
       {showProducts && ( 
         <><div>
             <h2>Producten</h2>
+
+            <input
+              type="text"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              placeholder="Productnaam"
+            />
+            <input
+              type="number"
+              value={productPrice}
+              onChange={(e) => setProductPrice(e.target.value)}
+              placeholder="Prijs"
+            />
+            <input 
+              type="text"
+              value={productCategory}
+              onChange={(e) => setProductCategory(e.target.value)}
+              placeholder="Categorie"
+            />
+            <input 
+              type="text"
+              value={productBrand}
+              onChange={(e) => setProductBrand(e.target.value)}
+              placeholder="Merk"
+            />
+            <input 
+              type="number"
+              value={productStock}
+              onChange={(e) => setProductStock(e.target.value)}
+              placeholder="Voorraad"
+            />
+
+            <button onClick={addProduct}>Product toevoegen</button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
 
             {products.map((product) => (
               <div key={product.id}>
