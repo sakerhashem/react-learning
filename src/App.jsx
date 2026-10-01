@@ -50,12 +50,12 @@ function App() {
   const [productCategory, setProductCategory] = useState('');
   const [productBrand, setProductBrand] = useState('');
   const [productStock, setProductStock] = useState('');
-
   const [showProducts, setShowProducts] = useState(true);
   const [showExpensive, setShowExpensive] = useState(false);
   const availableProducts = products.filter((product) => product.stock > 0);
   const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
   const [error, setError] = useState("");
+  const [editingProductId, setEditingProductId] = useState(null);
   
 
   const increaseStock = (id) => {
@@ -87,14 +87,41 @@ function App() {
   const addProduct = () => {
     if (
       productName.trim() === "" || 
-      productPrice.trim() === "" || 
+      productPrice === "" || 
       productCategory.trim() === "" || 
       productBrand.trim() === "" || 
-      productStock.trim() === "" ||
+      productStock === "" ||
       Number(productPrice) < 0 ||
       Number(productStock) < 0
     ) {
       setError("Vul alle velden in met correcte waarden.");
+      return;
+    }
+    
+    if (editingProductId !== null) {
+      const editProduct = {
+        id: editingProductId,
+        name: productName,
+        price: Number(productPrice),
+        category: productCategory,
+        brand: productBrand,
+        stock: Number(productStock)
+      };
+      
+      setProducts(
+        products.map((product) => 
+          product.id === editingProductId ? editProduct : product
+        )
+      );
+
+      setEditingProductId(null);
+      setProductName("");
+      setProductPrice("");
+      setProductCategory("");
+      setProductBrand("");
+      setProductStock("");
+      setError("");
+
       return;
     }
 
@@ -114,6 +141,23 @@ function App() {
     setProductBrand("");
     setProductStock("");
     setError("");
+  };
+
+  const startEdit = (id) => {
+    const product = products.find((product) => product.id === id);
+
+    setEditingProductId(product.id);
+    setProductName(product.name);
+    setProductPrice(product.price);
+    setProductCategory(product.category);
+    setProductBrand(product.brand);
+    setProductStock(product.stock);
+  };
+
+  const deleteProduct = (id) => {
+    setProducts(
+      products.filter((product) => product.id !== id)
+    );
   };
   
 
@@ -162,7 +206,9 @@ function App() {
               placeholder="Voorraad"
             />
 
-            <button onClick={addProduct}>Product toevoegen</button>
+            <button onClick={addProduct}>
+              {editingProductId === null ? "Product toevoegen" : "Product opslaan"}
+            </button>
             {error && <p style={{ color: "red" }}>{error}</p>}
 
             {products.map((product) => (
@@ -180,6 +226,12 @@ function App() {
                 </button>
                 <button onClick={() => decreaseStock(product.id)}>
                   -
+                </button>
+                <button onClick={() => startEdit(product.id)}>
+                  Bewerken
+                </button>
+                <button onClick={() => deleteProduct(product.id)}>
+                  Verwijderen
                 </button>
                </div> 
             ))}
