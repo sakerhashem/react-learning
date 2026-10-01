@@ -90,9 +90,11 @@ function App() {
       productPrice.trim() === "" || 
       productCategory.trim() === "" || 
       productBrand.trim() === "" || 
-      productStock.trim() === ""
+      productStock.trim() === "" ||
+      Number(productPrice) < 0 ||
+      Number(productStock) < 0
     ) {
-      setError("Vul alle velden in.");
+      setError("Vul alle velden in met correcte waarden.");
       return;
     }
 
