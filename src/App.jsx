@@ -7,43 +7,52 @@ import Toggle from './components/Toggle';
 import NameForm from './components/NameForm';
 import NameInput from './components/NameInput';
 import ProductCounter from './components/ProductCounter';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Laptop",
-      price: 899,
-      category: "Electronics",
-      brand: "Dell",
-      stock: 5
-    },
-    {
-      id: 2,
-      name: "iPhone",
-      price: 999,
-      category: "Smartphone",
-      brand: "Apple",
-      stock: 0
-    },
-    {
-      id: 3,
-      name: "Keyboard",
-      price: 79,
-      category: "Accessories",
-      brand: "Logitech",
-      stock: 10
-    },
-    {
-      id: 4,
-      name: "Mouse",
-      price: 39,
-      category: "Accessories",
-      brand: "Logitech",
-      stock: 7
+  const [products, setProducts] = useState(() => {
+    const savedProducts = localStorage.getItem("products");
+
+    if(savedProducts) {
+      return JSON.parse(savedProducts);
     }
-  ]);
+
+    return [
+      {
+        id: 1,
+        name: "Laptop",
+        price: 899,
+        category: "Electronics",
+        brand: "Dell",
+        stock: 5
+      },
+      {
+        id: 2,
+        name: "iPhone",
+        price: 999,
+        category: "Smartphone",
+        brand: "Apple",
+        stock: 0
+      },
+      {
+        id: 3,
+        name: "Keyboard",
+        price: 79,
+        category: "Accessories",
+        brand: "Logitech",
+        stock: 10
+      },
+      {
+        id: 4,
+        name: "Mouse",
+        price: 39,
+        category: "Accessories",
+        brand: "Logitech",
+        stock: 7
+      }
+    ];
+  });
+
 
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
@@ -56,7 +65,22 @@ function App() {
   const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
   const [error, setError] = useState("");
   const [editingProductId, setEditingProductId] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const selectedProduct = products.find((product) => product.id === selectedProductId);
   
+  useEffect(() => {
+    console.log("Products zijn veranderd: ", products)
+  }, [products]);
+
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(products));
+  }, [products]);
+
+  useEffect(() => {
+    if(selectedProductId !== null) {
+      console.log("Geselecteerd product: ", selectedProductId);
+    }
+  }, [selectedProductId]);
 
   const increaseStock = (id) => {
     setProducts(
@@ -230,11 +254,26 @@ function App() {
                 <button onClick={() => startEdit(product.id)}>
                   Bewerken
                 </button>
+                <button onClick={() => setSelectedProductId(product.id)}>
+                  Selecteer
+                </button>
                 <button onClick={() => deleteProduct(product.id)}>
                   Verwijderen
                 </button>
                </div> 
             ))}
+
+            {selectedProduct && (
+              <div>
+                <h3>Geselecteerd product</h3>
+                <p>Naam: {selectedProduct.name}</p>
+                <p>Prijs: €{selectedProduct.price}</p>
+                <p>Voorraad: {selectedProduct.stock}</p>
+                <button onClick={() => setSelectedProductId(null)}>
+                  Deselecteer product
+                </button>
+              </div>
+            )}
             
             </div><br /></>
        )}
