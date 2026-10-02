@@ -61,13 +61,35 @@ function App() {
   const [productStock, setProductStock] = useState('');
   const [showProducts, setShowProducts] = useState(true);
   const [showExpensive, setShowExpensive] = useState(false);
-  const availableProducts = products.filter((product) => product.stock > 0);
-  const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [editingProductId, setEditingProductId] = useState(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+
+  const availableProducts = products.filter((product) => product.stock > 0);
+  const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
   const selectedProduct = products.find((product) => product.id === selectedProductId);
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase()) && (categoryFilter === '' || product.category === categoryFilter)
+  );
+  const categories = [...new Set(products.map((product) => product.category))];  // Set zorgt ervoor dat er geen dubbele categorieën in de array komen
   
+  
+  let displayedProducts = [...products];
+
+  displayedProducts = displayedProducts.filter((product) => 
+    product.name.toLowerCase().includes(search.toLowerCase()) && (categoryFilter === '' || product.category === categoryFilter));
+
+  if (sortOrder === "low-high") {
+    displayedProducts.sort((a,b) => a.price - b.price);
+  }
+
+  if (sortOrder === "high-low") {
+    displayedProducts.sort((a,b) => b.price - a.price);
+  }
+
   useEffect(() => {
     console.log("Products zijn veranderd: ", products)
   }, [products]);
@@ -199,6 +221,30 @@ function App() {
         <><div>
             <h2>Producten</h2>
 
+            <input                                      // zoekveld voor productnaam
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Zoek product..."
+            />
+
+            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>   // dropdown voor categorie filter
+              <option value="">Alle categorieen</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+
+            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+              <option value="">Geen sortering</option>
+              <option value="low-high">Prijs: laag - hoog</option>
+              <option value="high-low">Prijs: hoog - laag</option>
+            </select>
+
+            <br />
+
             <input
               type="text"
               value={productName}
@@ -235,12 +281,15 @@ function App() {
             </button>
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            {products.map((product) => (
-              <div key={product.id}>
-                <Product
-                  name={product.name}
-                  price={product.price}
-                  category={product.category}
+            {displayedProducts.length === 0 ? (
+              <p>Geen producten gevonden.</p>
+            ) : (
+              displayedProducts.map((product) => (
+                <div key={product.id}>
+                  <Product
+                    name={product.name}
+                    price={product.price}
+                    category={product.category}
                   brand={product.brand}
                   stock={product.stock} 
                 />
@@ -261,7 +310,9 @@ function App() {
                   Verwijderen
                 </button>
                </div> 
-            ))}
+                )
+              )
+            )}
 
             {selectedProduct && (
               <div>
