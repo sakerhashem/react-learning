@@ -1,5 +1,7 @@
-function Product({ name, price, category, brand, stock }) {
-    
+import { memo } from "react";
+
+function Product({ name, price, category, brand, stock, onProductClick }) {
+
   return (
     <div>
       <p>naam: {name}</p>
@@ -9,8 +11,11 @@ function Product({ name, price, category, brand, stock }) {
       <p>categorie: {category}</p>
       <p>Voorraad: {stock}</p>
       <p>{stock > 0 ? "Product is beschikbaar" : "Product is niet beschikbaar"}</p>
+      <button onClick={() => onProductClick(name)}>Klik product</button>
     </div>
   );
 }
 
-export default Product;
+// een parent-render waarbij de props van product hetzelfde blijven dan product wortdt niet opnieuw gerenderd
+// export default Product; Zonder memo een parent-render dan product redert opnieuw
+export default memo(Product); 

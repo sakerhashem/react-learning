@@ -1,3 +1,8 @@
+
+// useMemo = berekende waarde onthouden
+// useCallBack = functie onthouden
+// React.memo = component-render overslaan
+
 import Product from './components/Product';
 import User from './components/User';
 import Book from './components/Book';
@@ -7,7 +12,9 @@ import Toggle from './components/Toggle';
 import NameForm from './components/NameForm';
 import NameInput from './components/NameInput';
 import ProductCounter from './components/ProductCounter';
-import { useState, useEffect } from 'react';
+import FocusInput from './components/FocusInput';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+
 
 function App() {
   const [products, setProducts] = useState(() => {
@@ -67,6 +74,7 @@ function App() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+  const [counter, setCounter] = useState(0);
 
   const availableProducts = products.filter((product) => product.stock > 0);
   const expensiveProducts = products.filter((product) => product.stock > 0 && product.price > 100);
@@ -76,19 +84,25 @@ function App() {
   );
   const categories = [...new Set(products.map((product) => product.category))];  // Set zorgt ervoor dat er geen dubbele categorieën in de array komen
   
+  // useMemo onthoudt het resultaat van een berekening totdat een van de dependencies verandert
+  const displayedProducts = useMemo(() => {   
+    
+    let result = products.filter((product) => 
+      product.name.toLowerCase().includes(search.toLowerCase()) && (categoryFilter === '' || product.category === categoryFilter));
+
+    if (sortOrder === "low-high") {
+      result.sort((a,b) => a.price - b.price);
+    }
+
+    if (sortOrder === "high-low") {
+      result.sort((a,b) => b.price - a.price);
+    }
+
+    return result;
+
+  }, [products, search, categoryFilter, sortOrder]);
+
   
-  let displayedProducts = [...products];
-
-  displayedProducts = displayedProducts.filter((product) => 
-    product.name.toLowerCase().includes(search.toLowerCase()) && (categoryFilter === '' || product.category === categoryFilter));
-
-  if (sortOrder === "low-high") {
-    displayedProducts.sort((a,b) => a.price - b.price);
-  }
-
-  if (sortOrder === "high-low") {
-    displayedProducts.sort((a,b) => b.price - a.price);
-  }
 
   useEffect(() => {
     console.log("Products zijn veranderd: ", products)
@@ -205,11 +219,23 @@ function App() {
       products.filter((product) => product.id !== id)
     );
   };
+
+  const handleProductClick = useCallback((id) => {
+    console.log("Product geklikt:", id);
+  }, []);
   
+  const testFunction = useCallback(() => {
+    console.log("Test function called");
+  }, []);
+
+  console.log("App render");
 
   return (
     <div>
       <h1>Hello React!</h1>
+      <button onClick={testFunction}>Test</button>
+      <button onClick={() => setCounter(counter + 1)}>Counter: {counter}</button>
+      <FocusInput />
       <Toggle />
       <NameInput />
       <NameForm />
@@ -290,9 +316,10 @@ function App() {
                     name={product.name}
                     price={product.price}
                     category={product.category}
-                  brand={product.brand}
-                  stock={product.stock} 
-                />
+                    brand={product.brand}
+                    stock={product.stock}
+                    onProductClick={handleProductClick} 
+                  />
 
                 <button onClick={() => increaseStock(product.id)}>
                   +
