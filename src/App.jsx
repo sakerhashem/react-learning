@@ -14,6 +14,7 @@ import NameInput from './components/NameInput';
 import ProductCounter from './components/ProductCounter';
 import FocusInput from './components/FocusInput';
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import RenderCounter from './components/RenderCounter';
 
 
 function App() {
@@ -236,6 +237,7 @@ function App() {
       <button onClick={testFunction}>Test</button>
       <button onClick={() => setCounter(counter + 1)}>Counter: {counter}</button>
       <FocusInput />
+      <RenderCounter />
       <Toggle />
       <NameInput />
       <NameForm />
