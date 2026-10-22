@@ -15,9 +15,17 @@ import ProductCounter from './components/ProductCounter';
 import FocusInput from './components/FocusInput';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import RenderCounter from './components/RenderCounter';
+import UserContext from './context/UserContext';
+import UserProfile from './components/UserProfile';
+import UserMenu from './components/UserMenu';
 
 
 function App() {
+  const user = {
+    name: "John Doe",
+    role: "Full Stack Developer"
+  };
+
   const [products, setProducts] = useState(() => {
     const savedProducts = localStorage.getItem("products");
 
@@ -234,6 +242,11 @@ function App() {
   return (
     <div>
       <h1>Hello React!</h1>
+      <UserContext.Provider value={user}>
+        <h2>Mijn applicatie</h2>
+        <UserProfile />
+        <UserMenu />
+      </UserContext.Provider>
       <button onClick={testFunction}>Test</button>
       <button onClick={() => setCounter(counter + 1)}>Counter: {counter}</button>
       <FocusInput />
