@@ -31,3 +31,9 @@ function AuthPanel() {
 }
 
 export default AuthPanel;
+
+// createContext() — maakt een context aan.
+// AuthProvider — beheert en deelt de gebruikersstatus.
+// useAuth() — geeft componenten toegang tot de context.
+// login() en logout() — wijzigen de gebruikersstatus.
+// useState() — zorgt ervoor dat React de interface opnieuw rendert wanneer de gebruiker verandert.
