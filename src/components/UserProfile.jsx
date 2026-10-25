@@ -1,8 +1,7 @@
-import { useContext } from 'react';
-import UserContext from '../context/UserContext';
+import { useAuth } from "../context/AuthContext";
 
 function UserProfile() {
-    const user = useContext(UserContext);
+    const { user } = useAuth();
 
     return (
         <div>
